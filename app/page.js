@@ -136,14 +136,19 @@ export default function Home() {
     statVal: { fontFamily: "monospace", fontSize: 20, fontWeight: 700, display: "block", marginBottom: 4 },
     statLbl: { fontSize: 10, color: "#64748B", textTransform: "uppercase", letterSpacing: 0.8 },
     scoreBar: { background: "#0D1220", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 16, marginBottom: 16 },
-    bar: (w) => ({ height: 6, borderRadius: 99, background: "linear-gradient(90deg,#1652F0,#0EA5E9)", width: `${w}%`, transition: "width 1s" }),
+    bar: (w) => ({ height: 6, borderRadius: 99, background: `linear-gradient(90deg,#1652F0,#0EA5E9)`, width: `${w}%`, transition: "width 1s" }),
     tag: (good) => ({ fontSize: 11, padding: "4px 10px", borderRadius: 99, border: `1px solid ${good ? "rgba(16,185,129,0.4)" : "rgba(245,158,11,0.4)"}`, color: good ? "#10B981" : "#F59E0B", background: good ? "rgba(16,185,129,0.08)" : "rgba(245,158,11,0.08)", marginRight: 6, marginBottom: 6, display: "inline-block" }),
     airdropItem: { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", display: "flex", alignItems: "center", gap: 14, marginBottom: 10 },
-    badge: (st) => ({ fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 99, background: st === "eligible" ? "rgba(16,185,129,0.15)" : st === "maybe" ? "rgba(245,158,11,0.15)" : "rgba(100,116,139,0.15)", color: st === "eligible" ? "#10B981" : st === "maybe" ? "#F59E0B" : "#64748B" }),
+    badge: (s) => ({ fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 99, background: s === "eligible" ? "rgba(16,185,129,0.15)" : s === "maybe" ? "rgba(245,158,11,0.15)" : "rgba(100,116,139,0.15)", color: s === "eligible" ? "#10B981" : s === "maybe" ? "#F59E0B" : "#64748B" }),
     mintCard: { marginTop: 20, background: "linear-gradient(135deg,rgba(22,82,240,0.12),rgba(14,165,233,0.08))", border: "1px solid rgba(22,82,240,0.3)", borderRadius: 14, padding: 18 },
     mintBtn: { width: "100%", background: "#1652F0", color: "#fff", border: "none", borderRadius: 10, padding: 13, fontSize: 14, fontWeight: 600, cursor: "pointer", marginTop: 12 },
     error: { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "14px 16px", fontSize: 13, color: "#FCA5A5", marginBottom: 16 },
     ageBadge: { display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(22,82,240,0.12)", border: "1px solid rgba(22,82,240,0.3)", borderRadius: 99, padding: "6px 12px", fontSize: 12, color: "#93C5FD", marginBottom: 16 },
+    boostItem: { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer" },
+    boostIcon: (icon) => ({ width: 32, height: 32, borderRadius: 8, background: "rgba(22,82,240,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }),
+    boostTitle: { fontSize: 13, fontWeight: 600, marginBottom: 2, color: "#F1F5F9" },
+    boostDesc: { fontSize: 11, color: "#64748B" },
+    boostArrow: { fontSize: 16, color: "#1652F0", fontWeight: 700 },
   };
 
   return (
@@ -198,6 +203,71 @@ export default function Home() {
               <div style={{ marginBottom: 10 }}>
                 {walletResult.tags.map(t => <span key={t.label} style={s.tag(t.good)}>{t.label}</span>)}
               </div>
+
+              {/* BOOST SECTION */}
+              {walletResult.score < 80 && (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, color: "#64748B", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>🚀 Skorunu Yükselt</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {walletResult.txCount < 10 && (
+                      <div onClick={() => sdk.actions.openUrl("https://aerodrome.finance")} style={s.boostItem}>
+                        <div style={s.boostIcon("🔄")} />
+                        <div style={{ flex: 1 }}>
+                          <div style={s.boostTitle}>İşlem sayını artır</div>
+                          <div style={s.boostDesc}>Aerodrome'da swap yap → TX sayını artır</div>
+                        </div>
+                        <span style={s.boostArrow}>→</span>
+                      </div>
+                    )}
+                    {parseFloat(walletResult.ethBalance) < 0.001 && (
+                      <div onClick={() => sdk.actions.openUrl("https://coinbase.com")} style={s.boostItem}>
+                        <div style={s.boostIcon("⟠")} />
+                        <div style={{ flex: 1 }}>
+                          <div style={s.boostTitle}>ETH satın al</div>
+                          <div style={s.boostDesc}>Coinbase'den Base ağına ETH al</div>
+                        </div>
+                        <span style={s.boostArrow}>→</span>
+                      </div>
+                    )}
+                    {walletResult.contracts === 0 && (
+                      <div onClick={() => sdk.actions.openUrl("https://thirdweb.com/explore")} style={s.boostItem}>
+                        <div style={s.boostIcon("📜")} />
+                        <div style={{ flex: 1 }}>
+                          <div style={s.boostTitle}>Contract deploy et</div>
+                          <div style={s.boostDesc}>Thirdweb ile Base'e contract deploy et</div>
+                        </div>
+                        <span style={s.boostArrow}>→</span>
+                      </div>
+                    )}
+                    {walletResult.walletDays < 180 && (
+                      <div onClick={() => sdk.actions.openUrl("https://guild.xyz/base")} style={s.boostItem}>
+                        <div style={s.boostIcon("🏆")} />
+                        <div style={{ flex: 1 }}>
+                          <div style={s.boostTitle}>Guild görevlerini tamamla</div>
+                          <div style={s.boostDesc}>Base Guild'de rozetleri kazan</div>
+                        </div>
+                        <span style={s.boostArrow}>→</span>
+                      </div>
+                    )}
+                    <div onClick={() => sdk.actions.openUrl("https://www.base.org/names")} style={s.boostItem}>
+                      <div style={s.boostIcon("🏷️")} />
+                      <div style={{ flex: 1 }}>
+                        <div style={s.boostTitle}>Basename al</div>
+                        <div style={s.boostDesc}>base.org/names'den .base ismi al</div>
+                      </div>
+                      <span style={s.boostArrow}>→</span>
+                    </div>
+                    <div onClick={() => sdk.actions.openUrl("https://morpho.org")} style={s.boostItem}>
+                      <div style={s.boostIcon("💰")} />
+                      <div style={{ flex: 1 }}>
+                        <div style={s.boostTitle}>USDC ödünç ver</div>
+                        <div style={s.boostDesc}>Morpho'da USDC lend et, faiz kazan</div>
+                      </div>
+                      <span style={s.boostArrow}>→</span>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div style={s.mintCard}>
                 <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>🎖️ Mint Your Base Score as NFT</div>
                 <div style={{ fontSize: 12, color: "#64748B", marginBottom: 14 }}>Permanently record your onchain reputation as a unique NFT on Base.</div>
@@ -241,14 +311,14 @@ export default function Home() {
                 </div>
               ))}
               <button style={{ ...s.btn, width: "100%", marginTop: 16, background: "#0D1220", border: "1px solid rgba(255,255,255,0.08)" }} onClick={() => {
-                const text = `Just checked my Base airdrop eligibility! 🔵\n\nCheck yours → https://base-checker-v2.vercel.app\n\n#Base #Airdrop #Onchain`;
+                const text = `Just checked my Base airdrop eligibility! 🔵\n\nCheck yours → https://basechecker-two.vercel.app\n\n#Base #Airdrop #Onchain`;
                 sdk.actions.composeCast({ text }).catch(() => window.open(`https://warpcast.com/~/compose?text=${encodeURIComponent(text)}`, "_blank"));
               }}>Share on Farcaster 🟣</button>
               <div style={s.mintCard}>
                 <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>🎖️ Mint Your Airdrop Report as NFT</div>
                 <div style={{ fontSize: 12, color: "#64748B", marginBottom: 14 }}>Capture your eligibility snapshot on-chain. Prove you were early!</div>
                 <button style={s.mintBtn} onClick={mintNFT}>⬡ Mint My Airdrop Report NFT</button>
-                {mintSuccess && <div style={{ marginTop: 10, textAlign: "center", color: "#10B981", fontSize: 13 }}>✓ NFT minted!</div>}
+                {mintSuccess && <div style={{ marginTop: 10, textAlign: "center", color: "#10B981", fontSize: 13 }}>✓ NFT minted! Check your wallet on OpenSea.</div>}
               </div>
             </div>
           )}
