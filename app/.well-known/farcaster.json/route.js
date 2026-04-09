@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-
 export async function GET() {
   const appUrl = "https://base-checker-v2.vercel.app";
   
   const config = {
     accountAssociation: {
       header: "eyJmaWQiOjEzNTkxNDQsInR5cGUiOiJhdXRoIiwia2V5IjoiMHhFNzUyNjNFMjVDREMzQThFRkZDODcwRkRlQTUzMzczYjNkYTIyOWEwIn0",
-      payload: "eyJkb21haW4iOiJiYXNlY2hlY2tlci10d28udmVyY2VsLmFwcCJ9",
-      signature: "f1dHCciweXDDmqOyvn+lEtD7QNK7WTnsQH07J0kwIDJrWLsR/O2iuCfb4Rnzsa7kWBghaCO1DRjeh/l5jZrRSxw=",
+      payload: "eyJkb21haW4iOiJiYXNlLWNoZWNrZXItdjIudmVyY2VsLmFwcCJ9",
+      signature: "XiSfoCDlMP+h8xxmHipH7bf3yTqKxSk36tnFRZKEbTEv/FqrXoI/fUZG5Qoh2KRnlO8xN0s7BqluH8R7RbDAERw=",
     },
     frame: {
       version: "1",
@@ -19,6 +18,5 @@ export async function GET() {
       splashBackgroundColor: "#070B14",
     },
   };
-
   return NextResponse.json(config);
 }
