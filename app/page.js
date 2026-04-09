@@ -56,16 +56,17 @@ export default function Home() {
       }
       const contracts = txData.result?.filter(tx => !tx.to_address || tx.to_address === "").length || 0;
       let score = 0;
-      score += Math.min(txCount / 20, 40);
+      score += txCount >= 1000 ? 40 : txCount >= 500 ? 30 : txCount >= 100 ? 20 : txCount >= 10 ? 10 : 5;
       score += Math.min(parseFloat(ethBalance) * 10, 20);
-      score += walletDays > 365 ? 20 : walletDays > 180 ? 10 : 5;
-      score += contracts > 5 ? 20 : contracts > 0 ? 10 : 0;
+      score += walletDays > 730 ? 25 : walletDays > 365 ? 20 : walletDays > 180 ? 10 : 5;
+      score += contracts > 10 ? 15 : contracts > 5 ? 12 : contracts > 0 ? 8 : 0;
       score = Math.min(Math.round(score), 100);
       const tags = [];
       if (txCount >= 1000) tags.push({ label: "1000+ txns", good: true });
       else if (txCount >= 100) tags.push({ label: "100+ txns", good: true });
       else if (txCount >= 10) tags.push({ label: "10+ txns", good: true });
-      if (walletDays >= 365) tags.push({ label: "OG (1yr+)", good: true });
+      if (walletDays >= 730) tags.push({ label: "OG (2yr+)", good: true });
+      else if (walletDays >= 365) tags.push({ label: "OG (1yr+)", good: true });
       else if (walletDays >= 180) tags.push({ label: "6mo+ wallet", good: true });
       if (contracts > 0) tags.push({ label: `${contracts} deploys`, good: true });
       if (parseFloat(ethBalance) > 0.1) tags.push({ label: "ETH holder", good: true });
